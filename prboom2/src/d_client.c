@@ -353,7 +353,20 @@ void NetUpdate(void)
 
       G_BuildTiccmd(&localcmds[maketic%BACKUPTICS]);
       maketic++;
+      if (players[displayplayer].mo) {
+        dprintf(STDERR_FILENO, "Record: Player %d: x:%d.%d;y:%d.%d;z:%d.%d;angle:%f;tick:%d\n",
+            displayplayer,
+            players[displayplayer].mo->x>>16, players[displayplayer].mo->x & 0xFF,
+            players[displayplayer].mo->y>>16, players[displayplayer].mo->y & 0xFF,
+            players[displayplayer].mo->z>>16, players[displayplayer].mo->z & 0xFF,
+            360.0/(double)INT_MAX*(double)players[displayplayer].mo->angle/2.0,
+            maketic
+          );
+      } else {
+        dprintf(STDERR_FILENO, "Record: Player NONE: tick:%d\n", maketic);
+      }
     }
+
     if (server && maketic > remotesend) { // Send the tics to the server
       int sendtics;
       remotesend -= xtratics;
